@@ -1,0 +1,3311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smartup API Documentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700;800&display=swap');
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2128;
+      --border: #30363d;
+      --accent: #f97316;
+      --accent2: #fb923c;
+      --green: #3fb950;
+      --blue: #58a6ff;
+      --purple: #d2a8ff;
+      --red: #ff7b72;
+      --yellow: #e3b341;
+      --text: #e6edf3;
+      --text2: #8b949e;
+      --text3: #6e7681;
+      --post-bg: #1a2a1a;
+      --post-border: #3fb950;
+      --get-bg: #1a1f2e;
+      --get-border: #58a6ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .sidebar-subtitle {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    .nav-section {
+      padding: 12px 0;
+    }
+
+    .nav-section-title {
+      padding: 6px 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .method-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag-post {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+    }
+
+    .tag-get {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--blue);
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      margin-left: 280px;
+      flex: 1;
+      max-width: calc(100vw - 280px);
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 60px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: 100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(88, 166, 255, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--text2);
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    /* CONTENT AREA */
+    .content {
+      padding: 48px 60px;
+      max-width: 900px;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 64px;
+    }
+
+    .section-anchor {
+      display: block;
+      position: relative;
+      top: -80px;
+      visibility: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* INFO BOX */
+    .info-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+
+    .info-box p {
+      color: var(--text2);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .info-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    /* ALERT BOX */
+    .alert {
+      display: flex;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .alert-warning {
+      background: rgba(227, 179, 65, 0.08);
+      border: 1px solid rgba(227, 179, 65, 0.25);
+      color: var(--yellow);
+    }
+
+    .alert-info {
+      background: rgba(88, 166, 255, 0.08);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      color: var(--blue);
+    }
+
+    .alert-success {
+      background: rgba(63, 185, 80, 0.08);
+      border: 1px solid rgba(63, 185, 80, 0.2);
+      color: var(--green);
+    }
+
+    .alert-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* TABLE */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead {
+      background: var(--surface2);
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 11px 16px;
+      color: var(--text2);
+      border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--purple);
+      font-size: 12px;
+    }
+
+    td.required {
+      color: var(--red);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    td.optional {
+      color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-yes {
+      background: rgba(255, 123, 114, 0.15);
+      color: var(--red);
+    }
+
+    .badge-no {
+      background: rgba(110, 118, 129, 0.15);
+      color: var(--text3);
+    }
+
+    .badge-opt {
+      background: rgba(227, 179, 65, 0.12);
+      color: var(--yellow);
+    }
+
+    .badge-post {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .badge-get {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--blue);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+
+    /* CODE */
+    pre {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 10px 16px;
+      font-size: 11px;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .code-header+pre {
+      border-radius: 0 0 8px 8px;
+      margin-top: 0;
+    }
+
+    .hl-key {
+      color: #79b8ff;
+    }
+
+    .hl-str {
+      color: #9ecbff;
+    }
+
+    .hl-num {
+      color: #f8c555;
+    }
+
+    .hl-bool {
+      color: #e96900;
+    }
+
+    .hl-null {
+      color: var(--text3);
+    }
+
+    .hl-com {
+      color: var(--text3);
+      font-style: italic;
+    }
+
+    .hl-curl {
+      color: var(--accent2);
+    }
+
+    /* ENDPOINT CARD */
+    .endpoint-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 32px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .endpoint-card:hover {
+      border-color: rgba(249, 115, 22, 0.3);
+    }
+
+    .endpoint-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .endpoint-method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .method-post {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .method-get {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--blue);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+
+    .endpoint-info {
+      flex: 1;
+    }
+
+    .endpoint-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .endpoint-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent2);
+      background: rgba(249, 115, 22, 0.07);
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    .endpoint-desc {
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .endpoint-body {
+      padding: 24px;
+    }
+
+    .subsection-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subsection-title::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .subsection-title:first-child {
+      margin-top: 0;
+    }
+
+    /* FOLDER DIVIDER */
+    .folder-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .folder-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(210, 168, 255, 0.1);
+      border: 1px solid rgba(210, 168, 255, 0.25);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .folder-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    .folder-desc {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    .folder-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(210, 168, 255, 0.2), transparent);
+    }
+
+    /* LIMITS GRID */
+    .limits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .limit-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .limit-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .limit-label {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+
+    .limit-type {
+      font-size: 10px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* RESPONSE GRID */
+    .response-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .response-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* AUTH CARD */
+    .auth-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+
+    .auth-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .auth-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .auth-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--purple);
+      width: 100px;
+      flex-shrink: 0;
+    }
+
+    .auth-val {
+      font-size: 13px;
+      color: var(--text2);
+      flex: 1;
+    }
+
+    /* TOC */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 48px;
+    }
+
+    .toc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      margin-bottom: 4px;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.15s;
+    }
+
+    .toc-link:hover {
+      color: var(--accent);
+    }
+
+    .toc-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text3);
+      width: 24px;
+    }
+
+    .toc-sub {
+      padding-left: 34px;
+    }
+
+    .toc-sub .toc-link {
+      font-size: 12px;
+    }
+
+    /* PROFILE COMPONENTS */
+    .hero-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-content {
+      flex: 1;
+    }
+
+    .hero-profile {
+      flex-shrink: 0;
+    }
+
+    .profile-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+
+    .profile-photo {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      padding: 5px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .profile-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .profile-details h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .profile-details p {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 0 !important;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .sidebar-user-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-user-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sidebar-user-info {
+      overflow: hidden;
+    }
+
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-user-phone {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+      margin: 48px 0;
+    }
+
+    /* FOOTER */
+    .footer {
+      margin-top: 80px;
+      padding: 32px 0 48px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text3);
+      font-size: 12px;
+    }
+
+    /* SCROLL */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* PROTECTION */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    /* Allow selection in inputs if any were added, but generally keep it off */
+    input,
+    textarea {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        max-width: 100vw;
+      }
+
+      .hero,
+      .content {
+        padding: 24px 20px;
+      }
+
+      .limits-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .response-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 
+    ==========================================================================
+    MANUAL CONFIGURATION / SOZLAMALAR
+    Rasm va ma'lumotlarni shu yerdan o'zgartirishingiz mumkin:
+    ==========================================================================
+  -->
+  <script>
+    const USER_CONFIG = {
+      name: "SHAXRIYOR",          // Ismingiz
+      phone: "+998 33 119 10 07", // Telefon raqamingiz
+      photo: "SHOX.jpg"     // Rasm manzili (URL yoki fayl nomi)
+    };
+
+    // Ma'lumotlarni avtomatik yangilash funksiyasi
+    function updateUserInfo() {
+      document.querySelectorAll('.sidebar-user-name, .profile-details h2').forEach(el => el.textContent = USER_CONFIG.name);
+      document.querySelectorAll('.sidebar-user-phone, .profile-details p').forEach(el => el.textContent = USER_CONFIG.phone);
+      document.querySelectorAll('.sidebar-user-photo img, .profile-photo img').forEach(img => {
+        img.src = USER_CONFIG.photo;
+        img.alt = USER_CONFIG.name;
+      });
+    }
+
+    // Himoya funksiyalari
+    function setupProtection() {
+      // O'ng tugmani o'chirish
+      document.addEventListener('contextmenu', e => e.preventDefault());
+
+      // Klaviatura kombinatsiyalarini o'chirish
+      document.addEventListener('keydown', e => {
+        // F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S, Ctrl+C
+        if (
+          e.key === 'F12' ||
+          (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+          (e.ctrlKey && e.key === 'u') ||
+          (e.ctrlKey && e.key === 's') ||
+          (e.ctrlKey && e.key === 'c') ||
+          (e.metaKey && e.key === 'c') // Mac uchun
+        ) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      // Nusxa olishni bloklash
+      document.addEventListener('copy', e => e.preventDefault());
+    }
+
+    // Sahifa yuklanganda ishga tushirish
+    window.addEventListener('DOMContentLoaded', () => {
+      updateUserInfo();
+      setupProtection();
+    });
+  </script>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-user-photo">
+        <img src="user_photo.jpg" alt="Shaxriyor">
+      </div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">Shaxriyor</div>
+        <div class="sidebar-user-phone">+998 90 123 45 67</div>
+      </div>
+    </div>
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-icon">S</div>
+        <div>
+          <div class="sidebar-title">Smartup API</div>
+          <div class="sidebar-subtitle">Official Documentation</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Introduction</div>
+      <a class="nav-item active" href="#overview">📖 Overview</a>
+      <a class="nav-item" href="#limitations">⚡ API Limitations</a>
+      <a class="nav-item" href="#auth">🔐 Authentication</a>
+      <a class="nav-item" href="#headers">📋 Headers</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Documents</div>
+      <a class="nav-item" href="#return-import"><span class="method-tag tag-post">POST</span> Return / Import</a>
+      <a class="nav-item" href="#purchase-import"><span class="method-tag tag-post">POST</span> Purchase / Import</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">References</div>
+      <a class="nav-item" href="#inventory-import"><span class="method-tag tag-post">POST</span> Inventory / Import</a>
+      <a class="nav-item" href="#service-export"><span class="method-tag tag-post">POST</span> Service / Export</a>
+      <a class="nav-item" href="#price-type-import"><span class="method-tag tag-post">POST</span> Price Type /
+        Import</a>
+      <a class="nav-item" href="#inventory-price"><span class="method-tag tag-post">POST</span> Inventory Price /
+        Import</a>
+      <a class="nav-item" href="#natural-person"><span class="method-tag tag-post">POST</span> Natural Persons /
+        Import</a>
+      <a class="nav-item" href="#person-group-import"><span class="method-tag tag-post">POST</span> Person Group /
+        Import</a>
+      <a class="nav-item" href="#person-group-export"><span class="method-tag tag-post">POST</span> Person Group /
+        Export</a>
+      <a class="nav-item" href="#workspace-export"><span class="method-tag tag-post">POST</span> Workspaces / Export</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">⚡ Official API Docs</div>
+          <h1>Smartup <span>API</span><br>Documentation</h1>
+          <p>ERP-tizim uchun rasmiy API hujjati. Savdo agentlari, ombor, logistika va distribyutsiya jarayonlarini
+            avtomatlashtirish uchun integratsiya yechimlari.</p>
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="stat-val">HTTPS</div>
+              <div class="stat-label">Protokol</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">JSON / XML</div>
+              <div class="stat-label">Ma'lumot formati</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">Basic Auth</div>
+              <div class="stat-label">Autentifikatsiya</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">UTF-8</div>
+              <div class="stat-label">Encoding</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">10+</div>
+              <div class="stat-label">Endpoints</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-profile">
+          <div class="profile-card">
+            <div class="profile-photo">
+              <img src="user_photo.jpg" alt="Shaxriyor">
+            </div>
+            <div class="profile-details">
+              <h2>Shaxriyor</h2>
+              <p>+998 90 123 45 67</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- TABLE OF CONTENTS -->
+      <div class="toc">
+        <div class="toc-title">📚 Mundarija</div>
+        <ul class="toc-list">
+          <li><a class="toc-link" href="#overview"><span class="toc-num">01</span> Umumiy Ma'lumot (Overview)</a></li>
+          <li><a class="toc-link" href="#limitations"><span class="toc-num">02</span> API Cheklovlari (Limitations)</a>
+          </li>
+          <li><a class="toc-link" href="#auth"><span class="toc-num">03</span> Autentifikatsiya</a></li>
+          <li><a class="toc-link" href="#headers"><span class="toc-num">04</span> Majburiy Headerlar</a></li>
+          <li><a class="toc-link" href="#docs"><span class="toc-num">05</span> Documents (Hujjatlar)</a></li>
+          <ul class="toc-list toc-sub">
+            <li><a class="toc-link" href="#return-import">→ Return / Import</a></li>
+            <li><a class="toc-link" href="#purchase-import">→ Purchase / Import</a></li>
+          </ul>
+          <li><a class="toc-link" href="#refs"><span class="toc-num">06</span> References (Ma'lumotnomalar)</a></li>
+          <ul class="toc-list toc-sub">
+            <li><a class="toc-link" href="#inventory-import">→ Inventory / Import</a></li>
+            <li><a class="toc-link" href="#service-export">→ Service / Export</a></li>
+            <li><a class="toc-link" href="#price-type-import">→ Price Type / Import</a></li>
+            <li><a class="toc-link" href="#inventory-price">→ Inventory Price / Import</a></li>
+            <li><a class="toc-link" href="#natural-person">→ Natural Persons / Import</a></li>
+            <li><a class="toc-link" href="#person-group-import">→ Person Group / Import</a></li>
+            <li><a class="toc-link" href="#person-group-export">→ Person Group / Export</a></li>
+            <li><a class="toc-link" href="#workspace-export">→ Workspaces / Export</a></li>
+          </ul>
+        </ul>
+      </div>
+
+      <!-- ==================== SECTION 1: OVERVIEW ==================== -->
+      <div class="section">
+        <span class="section-anchor" id="overview"></span>
+        <div class="section-header">
+          <div class="section-icon">📖</div>
+          <div>
+            <div class="section-num">01</div>
+            <div class="section-title">Umumiy Ma'lumot</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <p><strong>Smartup</strong> — savdo agentlari, sotish bo'limi, buxgalteriya, ombor va logistika ishlarini
+            avtomatlashtirish uchun ERP-tizim. Distribyutsiya, trade marketing, ulgurji va chakana savdoni boshqarish
+            uchun bulutli yechim.</p>
+          <p style="margin-top:10px">Smartup API'lari tashqi tizimlar bilan integratsiya yechimlarini yaratish uchun
+            mo'ljallangan. Hujjat tashqi tizimlar bilan ma'lumot almashishda ishlatiladigan ma'lumotlar modeli va API
+            ishlash tamoyillarini batafsil tavsiflaydi.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Xususiyat</th>
+                <th>Qiymat</th>
+                <th>Izoh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Protokol</td>
+                <td style="color:var(--green)">HTTPS</td>
+                <td style="color:var(--text2)">HTTP over SSL — nisbatan xavfsiz</td>
+              </tr>
+              <tr>
+                <td>Format</td>
+                <td style="color:var(--blue)">JSON / XML</td>
+                <td style="color:var(--text2)">Ikkala format ham qo'llab-quvvatlanadi</td>
+              </tr>
+              <tr>
+                <td>Encoding</td>
+                <td style="color:var(--blue)">UTF-8</td>
+                <td style="color:var(--text2)">Barcha so'rovlarda majburiy</td>
+              </tr>
+              <tr>
+                <td>Auth</td>
+                <td style="color:var(--purple)">Basic Auth</td>
+                <td style="color:var(--text2)">base64(username:password)</td>
+              </tr>
+              <tr>
+                <td>HTTP metodlar</td>
+                <td style="color:var(--blue)">GET, POST, PUT, DELETE</td>
+                <td style="color:var(--text2)">So'rov va javoblar HTTP metodlariga asoslangan</td>
+              </tr>
+              <tr>
+                <td>Base URL</td>
+                <td style="color:var(--accent)">https://smartup.online</td>
+                <td style="color:var(--text2)">Barcha so'rovlar uchun asosiy manzil</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection-title">Asosiy Kontsepsiyalar</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Atama</th>
+                <th>Tavsif</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>document_id</td>
+                <td style="color:var(--text2)">movement_id, stocktaking_id, writeoff_id, return_id, input_id, deal_id —
+                  ularning umumiy nomi</td>
+              </tr>
+              <tr>
+                <td>external_id</td>
+                <td style="color:var(--text2)">Tashqi tizim tomonidan berilgan obyekt/yozuv identifikatori</td>
+              </tr>
+              <tr>
+                <td>filial_code</td>
+                <td style="color:var(--text2)">Tashkilotning unikal kodi</td>
+              </tr>
+              <tr>
+                <td>inventory_kind</td>
+                <td style="color:var(--text2)">P — mahsulotlar, G — tovarlar, M — xom ashyo</td>
+              </tr>
+              <tr>
+                <td>state</td>
+                <td style="color:var(--text2)">A — faol (Active), P — nofaol (Passive)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 2: LIMITATIONS ==================== -->
+      <div class="section">
+        <span class="section-anchor" id="limitations"></span>
+        <div class="section-header">
+          <div class="section-icon">⚡</div>
+          <div>
+            <div class="section-num">02</div>
+            <div class="section-title">API Cheklovlari</div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning">
+          <div class="alert-icon">⚠️</div>
+          <div>Tizim barqarorligi va ishlash samaradorligini ta'minlash uchun quyidagi cheklovlar mavjud. Limitlar
+            kompaniya bo'yicha belgilanadi.</div>
+        </div>
+
+        <div class="subsection-title">Kunlik So'rovlar Limiti</div>
+        <div class="limits-grid">
+          <div class="limit-card">
+            <div class="limit-val">100</div>
+            <div class="limit-label">so'rov/kun</div>
+            <div class="limit-type">References</div>
+          </div>
+          <div class="limit-card">
+            <div class="limit-val">300</div>
+            <div class="limit-label">so'rov/kun</div>
+            <div class="limit-type">Kam ishlatiladigan hujjatlar</div>
+          </div>
+          <div class="limit-card">
+            <div class="limit-val">500</div>
+            <div class="limit-label">so'rov/kun</div>
+            <div class="limit-type">Ko'p ishlatiladigan hujjatlar</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">Ma'lumotlarga Kirish Limiti</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cheklov</th>
+                <th>Qiymat</th>
+                <th>Tavsif</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>day_range_limit</td>
+                <td style="color:var(--accent)">7 kun</td>
+                <td style="color:var(--text2)">Faqat oxirgi 7 kun davomidagi ma'lumotlarni so'rash mumkin</td>
+              </tr>
+              <tr>
+                <td>object_count</td>
+                <td style="color:var(--accent)">5000 ta</td>
+                <td style="color:var(--text2)">Bir so'rovda importga maksimal obyektlar soni</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection-title">Limit Monitoringi — Response Strukturasi</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Har bir "Document" javobi kompaniyaning joriy
+          limit ma'lumotlarini o'z ichiga oladi:</p>
+        <div class="code-header"><span>JSON — limits bloki</span><span style="color:var(--green)">Response</span></div>
+        <pre>{
+  <span class="hl-key">"limits"</span>: {
+    <span class="hl-key">"has_limit"</span>:       <span class="hl-str">""</span>,   <span class="hl-com">// "Y" - limit bor, "N" - yo'q</span>
+    <span class="hl-key">"limit_quant"</span>:     <span class="hl-str">""</span>,   <span class="hl-com">// Belgilangan davrda ruxsat etilgan maksimal so'rovlar</span>
+    <span class="hl-key">"object_count"</span>:    <span class="hl-str">""</span>,   <span class="hl-com">// Bir so'rovda ruxsat etilgan maksimal obyektlar</span>
+    <span class="hl-key">"day_range_limit"</span>: <span class="hl-str">""</span>,   <span class="hl-com">// Ma'lumot so'rash mumkin bo'lgan maksimal kunlar</span>
+    <span class="hl-key">"request_quant"</span>:   <span class="hl-str">""</span>,   <span class="hl-com">// Joriy davrda foydalanilgan so'rovlar soni</span>
+    <span class="hl-key">"left_limit_quant"</span>:<span class="hl-str">""</span>    <span class="hl-com">// Limitga yetguncha qolgan so'rovlar</span>
+  }
+}</pre>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kalit</th>
+                <th>Tur</th>
+                <th>Tavsif</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>has_limit</td>
+                <td style="color:var(--blue)">string</td>
+                <td style="color:var(--text2)">Kompaniyada limit borligini ko'rsatadi ("Y" / "N")</td>
+              </tr>
+              <tr>
+                <td>limit_quant</td>
+                <td style="color:var(--blue)">number</td>
+                <td style="color:var(--text2)">Belgilangan davrda ruxsat etilgan so'rovlarning maksimal soni</td>
+              </tr>
+              <tr>
+                <td>object_count</td>
+                <td style="color:var(--blue)">number</td>
+                <td style="color:var(--text2)">Bitta so'rovda ruxsat etilgan maksimal obyektlar soni</td>
+              </tr>
+              <tr>
+                <td>day_range_limit</td>
+                <td style="color:var(--blue)">number</td>
+                <td style="color:var(--text2)">Ma'lumot so'rash mumkin bo'lgan maksimal kun soni</td>
+              </tr>
+              <tr>
+                <td>request_quant</td>
+                <td style="color:var(--blue)">number</td>
+                <td style="color:var(--text2)">Joriy davrda foydalanilgan so'rovlar soni</td>
+              </tr>
+              <tr>
+                <td>left_limit_quant</td>
+                <td style="color:var(--blue)">number</td>
+                <td style="color:var(--text2)">Limitga yetguncha qolgan so'rovlar soni</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 3: AUTH ==================== -->
+      <div class="section">
+        <span class="section-anchor" id="auth"></span>
+        <div class="section-header">
+          <div class="section-icon">🔐</div>
+          <div>
+            <div class="section-num">03</div>
+            <div class="section-title">Autentifikatsiya</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <p>Smartup tizimida avtorizatsiya <strong>Basic Auth</strong> prinsipiga ko'ra amalga oshiriladi. Login va
+            parol <strong>Authorization</strong> headerida <strong>base64</strong> formatida kodlanib yuboriladi.</p>
+          <p style="margin-top:8px">HTTPS protokoli bilan birga ishlatilganda bu nisbatan xavfsiz usul hisoblanadi.</p>
+        </div>
+
+        <div class="subsection-title">Authorization Parametrlari</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parametr</th>
+                <th>Tur</th>
+                <th>Majburiy</th>
+                <th>Tavsif</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>username</td>
+                <td style="color:var(--blue)">string</td>
+                <td><span class="badge badge-yes">YES</span></td>
+                <td style="color:var(--text2)">Smartup X tizimiga kirish uchun login</td>
+              </tr>
+              <tr>
+                <td>password</td>
+                <td style="color:var(--blue)">string</td>
+                <td><span class="badge badge-yes">YES</span></td>
+                <td style="color:var(--text2)">Smartup X tizimiga kirish uchun parol</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection-title">base64 kodlash misoli</div>
+        <pre><span class="hl-com"># Linux / Mac terminalida:</span>
+<span class="hl-curl">echo -n "myuser:mypassword" | base64</span>
+<span class="hl-com"># Natija: bXl1c2VyOm15cGFzc3dvcmQ=</span>
+
+<span class="hl-com"># cURL so'rovida ishlatish:</span>
+<span class="hl-curl">curl --location 'https://smartup.online/b/...' \
+  -H "Authorization: Basic bXl1c2VyOm15cGFzc3dvcmQ=" \
+  -H "project_code: trade" \
+  -H "filial_id: 1" \
+  -H "Content-Type: application/json" \
+  --data '{ ... }'</span></pre>
+
+        <div class="subsection-title">Tashkilot Turlari</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tur</th>
+                <th>Tavsif</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Single organization</td>
+                <td style="color:var(--text2)">Barcha tegishli entitylar sozlanishi mumkin bo'lgan tashkilot. Boshqa
+                  yagona tashkilotlarga kirish imkoni <strong style="color:var(--red)">yo'q</strong>.</td>
+              </tr>
+              <tr>
+                <td>Head organization</td>
+                <td style="color:var(--text2)">Ma'muriy tashkilot — barcha yagona tashkilotlarni boshqarish imkoniyati
+                  <strong style="color:var(--green)">bor</strong>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4: HEADERS ==================== -->
+      <div class="section">
+        <span class="section-anchor" id="headers"></span>
+        <div class="section-header">
+          <div class="section-icon">📋</div>
+          <div>
+            <div class="section-num">04</div>
+            <div class="section-title">Majburiy Headerlar</div>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <div class="alert-icon">ℹ️</div>
+          <div><strong>project_code</strong> va <strong>filial_id</strong> — barcha so'rovlarda yuborilishi tavsiya
+            etiladi. Ular qaysi loyiha va tashkilot uchun so'rov bajarilishini belgilaydi.</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Header</th>
+                <th>Tavsif</th>
+                <th>Misol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Authorization</td>
+                <td style="color:var(--text2)">Basic Auth — base64 kodlangan login:parol</td>
+                <td style="color:var(--accent);font-family:monospace;font-size:11px">Basic dXNlcjpwYXNz</td>
+              </tr>
+              <tr>
+                <td>project_code</td>
+                <td style="color:var(--text2)">Loyiha identifikatori. Qaysi loyiha bilan ishlashingizni belgilaydi</td>
+                <td style="color:var(--accent);font-family:monospace;font-size:11px">trade / anor / clinic / telecom
+                </td>
+              </tr>
+              <tr>
+                <td>filial_id</td>
+                <td style="color:var(--text2)">Single yoki Head Organization ID si</td>
+                <td style="color:var(--accent);font-family:monospace;font-size:11px">1</td>
+              </tr>
+              <tr>
+                <td>Content-Type</td>
+                <td style="color:var(--text2)">So'rov formatini belgilaydi</td>
+                <td style="color:var(--accent);font-family:monospace;font-size:11px">application/json</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection-title">filial_id qoidalari</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Holat</th>
+                <th>Natija</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Single org filial_id</td>
+                <td style="color:var(--text2)">Barcha so'rovlar faqat tanlangan tashkilot bo'yicha</td>
+              </tr>
+              <tr>
+                <td>Head org filial_id</td>
+                <td style="color:var(--text2)">So'rovlar <code>filial_code</code> parametri asosida bajariladi</td>
+              </tr>
+              <tr>
+                <td>filial_code ko'rsatilmasa</td>
+                <td style="color:var(--text2)">Barcha tashkilotlar bo'yicha ma'lumot ko'rsatiladi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 
+        ==========================================================================
+        5. DOCUMENTS (HUJJATLAR) BO'LIMI
+        Yangi API endpointlarni shu yerga qo'shishingiz mumkin
+        ==========================================================================
+      -->
+      <div class="section">
+        <span class="section-anchor" id="docs"></span>
+        <div class="section-header">
+          <div class="section-icon">📁</div>
+          <div>
+            <div class="section-num">05</div>
+            <div class="section-title">Documents — Hujjatlar</div>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <div class="alert-icon">📌</div>
+          <div>Documents bo'limida <strong>500 so'rov/kun</strong> (ko'p ishlatiladigan) va <strong>300
+              so'rov/kun</strong> (kam ishlatiladigan) limitlar qo'llaniladi.</div>
+        </div>
+
+        <!-- RETURN IMPORT -->
+        <span class="section-anchor" id="return-import"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Return / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mdeal/return$import</div>
+              <div class="endpoint-desc">Uchinchi tomon dasturiy ta'minotidan buyurtmalarni qaytarish ma'lumotlarini
+                Smartup X ga yuklash imkonini beradi. Bir so'rovda ommaviy ma'lumotlarni qo'llab-quvvatlaydi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+
+            <div class="subsection-title">Request Body</div>
+            <div class="code-header"><span>JSON — return$import</span><span class="badge badge-post">POST</span></div>
+            <pre>{
+  <span class="hl-key">"return"</span>: [
+    {
+      <span class="hl-key">"filial_code"</span>:         <span class="hl-str">""</span>,              <span class="hl-com">// Tashkilot unikal kodi</span>
+      <span class="hl-key">"external_id"</span>:         <span class="hl-str">""</span>,              <span class="hl-com">// Tashqi tizim bergan ID</span>
+      <span class="hl-key">"deal_id"</span>:             <span class="hl-str">""</span>,              <span class="hl-com">// Smartup bergan buyurtma ID</span>
+      <span class="hl-key">"subfilial_code"</span>:      <span class="hl-str">""</span>,              <span class="hl-com">// Loyiha unikal kodi</span>
+      <span class="hl-key">"order_deal_id"</span>:       <span class="hl-str">""</span>,              <span class="hl-com">// Qaytarilayotgan buyurtma ID</span>
+      <span class="hl-key">"delivery_number"</span>:     <span class="hl-str">""</span>,              <span class="hl-com">// Hisob-faktura raqami</span>
+      <span class="hl-key">"delivery_date"</span>:       <span class="hl-str">""</span>,              <span class="hl-com">// Yetkazib berish sanasi (dd.mm.yyyy)</span>
+      <span class="hl-key">"booked_date"</span>:         <span class="hl-str">""</span>,              <span class="hl-com">// Bron sanasi</span>
+      <span class="hl-key">"room_code"</span>:           <span class="hl-str">""</span>,              <span class="hl-com">// Ish maydoni unikal kodi ✱</span>
+      <span class="hl-key">"robot_code"</span>:          <span class="hl-str">""</span>,              <span class="hl-com">// Holat unikal kodi ✱</span>
+      <span class="hl-key">"deal_time"</span>:           <span class="hl-str">"dd.mm.yyyy hh24:mi:ss"</span>, <span class="hl-com">// Qaytarish sanasi ✱</span>
+      <span class="hl-key">"status"</span>:              <span class="hl-str">"D"</span>,             <span class="hl-com">// D-qoralama, A-arxivlangan ✱</span>
+      <span class="hl-key">"sales_manager_code"</span>:  <span class="hl-str">""</span>,              <span class="hl-com">// Menejer unikal kodi ✱</span>
+      <span class="hl-key">"expeditor_code"</span>:      <span class="hl-str">""</span>,              <span class="hl-com">// Ekspeditor kodi</span>
+      <span class="hl-key">"person_code"</span>:         <span class="hl-str">""</span>,              <span class="hl-com">// Mijoz unikal kodi ✱</span>
+      <span class="hl-key">"currency_code"</span>:       <span class="hl-str">""</span>,              <span class="hl-com">// Valyuta unikal kodi ✱</span>
+      <span class="hl-key">"owner_person_code"</span>:   <span class="hl-str">""</span>,              <span class="hl-com">// Egasi unikal kodi</span>
+      <span class="hl-key">"manager_code"</span>:        <span class="hl-str">""</span>,              <span class="hl-com">// Menejer kodi</span>
+      <span class="hl-key">"van_code"</span>:            <span class="hl-str">""</span>,              <span class="hl-com">// Transport davlat raqami</span>
+      <span class="hl-key">"contract_code"</span>:       <span class="hl-str">""</span>,              <span class="hl-com">// Shartnoma unikal kodi</span>
+      <span class="hl-key">"note"</span>:                <span class="hl-str">""</span>,              <span class="hl-com">// Izoh</span>
+      <span class="hl-key">"return_reason_code"</span>:  <span class="hl-str">""</span>,              <span class="hl-com">// Qaytarish sababi kodi</span>
+      <span class="hl-key">"invoice_number"</span>:      <span class="hl-str">""</span>,              <span class="hl-com">// Hisob-faktura raqami</span>
+      <span class="hl-key">"payment_type_code"</span>:   <span class="hl-str">""</span>,              <span class="hl-com">// To'lov turi kodi</span>
+      <span class="hl-key">"return_products"</span>: [
+        {
+          <span class="hl-key">"product_code"</span>:   <span class="hl-str">"100"</span>,   <span class="hl-com">// Mahsulot unikal kodi ✱</span>
+          <span class="hl-key">"return_quant"</span>:   <span class="hl-str">"10"</span>,    <span class="hl-com">// Qaytariladigan miqdor ✱</span>
+          <span class="hl-key">"product_price"</span>:  <span class="hl-str">"777"</span>,   <span class="hl-com">// Tovar narxi ✱</span>
+          <span class="hl-key">"price_type_code"</span>:<span class="hl-str">"777"</span>,   <span class="hl-com">// Narx turi unikal kodi ✱</span>
+          <span class="hl-key">"warehouse_code"</span>: <span class="hl-str">"101"</span>,   <span class="hl-com">// Ombor unikal kodi ✱</span>
+          <span class="hl-key">"external_id"</span>:    <span class="hl-str">""</span>,       <span class="hl-com">// Tashqi tizim ID</span>
+          <span class="hl-key">"product_unit_id"</span>:<span class="hl-str">""</span>,       <span class="hl-com">// Tovar birligi ID</span>
+          <span class="hl-key">"serial_number"</span>:  <span class="hl-str">""</span>,       <span class="hl-com">// Seriya raqami</span>
+          <span class="hl-key">"card_code"</span>:      <span class="hl-str">""</span>,       <span class="hl-com">// Karta raqami</span>
+          <span class="hl-key">"expiry_date"</span>:    <span class="hl-str">""</span>,       <span class="hl-com">// Yaroqlilik muddati (dd.mm.yyyy)</span>
+          <span class="hl-key">"on_balance"</span>:     <span class="hl-str">""</span>,       <span class="hl-com">// Balansda (Y/N)</span>
+          <span class="hl-key">"margin_kind"</span>:    <span class="hl-str">""</span>,       <span class="hl-com">// Chegirma turi (P-%, A-summa)</span>
+          <span class="hl-key">"margin_value"</span>:   <span class="hl-str">""</span>,       <span class="hl-com">// Chegirma qiymati</span>
+          <span class="hl-key">"vat_percent"</span>:    <span class="hl-str">""</span>,       <span class="hl-com">// QQS (%)</span>
+          <span class="hl-key">"inventory_kind"</span>: <span class="hl-str">"G"</span>        <span class="hl-com">// P-mahsulot, G-tovar, M-xomashyo</span>
+        }
+      ]
+    }
+  ]
+}</pre>
+
+            <div class="subsection-title">Request Parametrlari — Asosiy</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>return</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish ma'lumotlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>filial_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-opt">OPT</span></td>
+                    <td style="color:var(--text2)">Tashkilot unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>external_id</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-opt">OPT</span></td>
+                    <td style="color:var(--text2)">Tashqi dastur bergan buyurtma ID</td>
+                  </tr>
+                  <tr>
+                    <td>deal_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-opt">OPT</span></td>
+                    <td style="color:var(--text2)">Smartup bergan buyurtma ID</td>
+                  </tr>
+                  <tr>
+                    <td>deal_time</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish sanasi (dd.mm.yyyy hh24:mi:ss)</td>
+                  </tr>
+                  <tr>
+                    <td>delivery_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Yetkazib berish sanasi (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>status</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">D — qoralama, A — arxivlangan</td>
+                  </tr>
+                  <tr>
+                    <td>room_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish qabul qilingan ish maydoni kodi</td>
+                  </tr>
+                  <tr>
+                    <td>robot_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish qabul qilingan holat unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>sales_manager_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Menejer unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>person_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Mijoz unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>currency_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish valyutasi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>booked_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Bron sanasi (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>expeditor_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ekspeditor kodi</td>
+                  </tr>
+                  <tr>
+                    <td>owner_person_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Egasi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>manager_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Menejer kodi</td>
+                  </tr>
+                  <tr>
+                    <td>van_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Transport davlat raqami</td>
+                  </tr>
+                  <tr>
+                    <td>contract_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Shartnoma unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>payment_type_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">To'lov turi kodi</td>
+                  </tr>
+                  <tr>
+                    <td>note</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qaytarish izohlari</td>
+                  </tr>
+                  <tr>
+                    <td>return_reason_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qaytarish sababi kodi</td>
+                  </tr>
+                  <tr>
+                    <td>invoice_number</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Hisob-faktura raqami</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection-title">return_products — Tovar Elementlari Parametrlari</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>return_products</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytarish tovar elementlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>product_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Mahsulot unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>return_quant</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Qaytariladigan miqdor</td>
+                  </tr>
+                  <tr>
+                    <td>product_price</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar narxi</td>
+                  </tr>
+                  <tr>
+                    <td>price_type_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx turi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>warehouse_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovarlar qaytariladigan ombor unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>external_id</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tashqi tizim bergan identifikator</td>
+                  </tr>
+                  <tr>
+                    <td>product_unit_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovar birligi ID</td>
+                  </tr>
+                  <tr>
+                    <td>serial_number</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Seriya raqami</td>
+                  </tr>
+                  <tr>
+                    <td>card_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Karta raqami</td>
+                  </tr>
+                  <tr>
+                    <td>expiry_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yaroqlilik muddati (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>on_balance</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Balansda: Y — ha, N — yo'q</td>
+                  </tr>
+                  <tr>
+                    <td>margin_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Chegirma/ustama turi: P — foiz, A — summa</td>
+                  </tr>
+                  <tr>
+                    <td>margin_value</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Chegirma/ustama qiymati</td>
+                  </tr>
+                  <tr>
+                    <td>vat_percent</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">QQS foizi (%)</td>
+                  </tr>
+                  <tr>
+                    <td>inventory_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">P — mahsulot, G — tovar, M — xom ashyo</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection-title">Response</div>
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">✅ Muvaffaqiyatli</div>
+                <pre>{
+  <span class="hl-key">"successes"</span>: [
+    { <span class="hl-key">"code"</span>: <span class="hl-str">""</span> }
+  ]
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">❌ Xato</div>
+                <pre>{
+  <span class="hl-key">"errors"</span>: [
+    {
+      <span class="hl-key">"code"</span>:    <span class="hl-str">""</span>,
+      <span class="hl-key">"message"</span>: <span class="hl-str">""</span>
+    }
+  ]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">cURL Misoli</div>
+            <pre><span class="hl-curl">curl --silent --location \
+  'https://smartup.online/b/anor/mxsx/mdeal/return$import' \
+  -H "Authorization: Basic &lt;base64(user:pass)&gt;" \
+  -H "project_code: trade" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "return": [{
+      "filial_code": "001",
+      "deal_time": "15.04.2024 10:30:00",
+      "delivery_date": "15.04.2024",
+      "status": "A",
+      "room_code": "ROOM_001",
+      "robot_code": "STATE_001",
+      "sales_manager_code": "MGR_001",
+      "person_code": "CLIENT_001",
+      "currency_code": "860",
+      "return_products": [{
+        "product_code": "PROD_100",
+        "return_quant": 5,
+        "product_price": 50000,
+        "price_type_code": "RETAIL",
+        "warehouse_code": "WH_001",
+        "inventory_kind": "G"
+      }]
+    }]
+  }'</span></pre>
+          </div>
+        </div>
+
+        <!-- PURCHASE IMPORT -->
+        <span class="section-anchor" id="purchase-import"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Purchase / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mkw/purchase$import</div>
+              <div class="endpoint-desc">Parametr qiymatlari asosida xarid ma'lumotlarini import qiladi. Bir so'rovda
+                ommaviy ma'lumotlarni qo'llab-quvvatlaydi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+
+            <div class="subsection-title">Request Body</div>
+            <div class="code-header"><span>JSON — purchase$import</span><span class="badge badge-post">POST</span></div>
+            <pre>{
+  <span class="hl-key">"purchase"</span>: [
+    {
+      <span class="hl-key">"filial_code"</span>:      <span class="hl-str">""</span>,
+      <span class="hl-key">"external_id"</span>:      <span class="hl-str">""</span>,
+      <span class="hl-key">"purchase_id"</span>:      <span class="hl-str">""</span>,
+      <span class="hl-key">"purchase_number"</span>:  <span class="hl-str">"7"</span>,           <span class="hl-com">// Xarid fakturasi raqami</span>
+      <span class="hl-key">"purchase_time"</span>:   <span class="hl-str">"02.09.2021"</span>, <span class="hl-com">// Xarid sanasi ✱</span>
+      <span class="hl-key">"order_id"</span>:        <span class="hl-str">""</span>,
+      <span class="hl-key">"status_code"</span>:     <span class="hl-str">"100"</span>,        <span class="hl-com">// Status kodi ✱</span>
+      <span class="hl-key">"input_date"</span>:      <span class="hl-str">"02.09.2021"</span>,
+      <span class="hl-key">"supplier_code"</span>:   <span class="hl-str">"101"</span>,        <span class="hl-com">// Ta'minotchi kodi ✱</span>
+      <span class="hl-key">"contract_code"</span>:   <span class="hl-str">""</span>,
+      <span class="hl-key">"warehouse_code"</span>:  <span class="hl-str">"100"</span>,        <span class="hl-com">// Ombor kodi</span>
+      <span class="hl-key">"currency_code"</span>:   <span class="hl-str">"860"</span>,        <span class="hl-com">// Valyuta kodi ✱</span>
+      <span class="hl-key">"invoice_number"</span>:  <span class="hl-str">"1"</span>,
+      <span class="hl-key">"invoice_date"</span>:    <span class="hl-str">"02.09.2021"</span>,
+      <span class="hl-key">"note"</span>:            <span class="hl-str">"Receipts to warehouse"</span>,
+      <span class="hl-key">"posted"</span>:          <span class="hl-str">"Y"</span>,          <span class="hl-com">// Yakunlangan: Y/N ✱</span>
+      <span class="hl-key">"purchase_items"</span>: [
+        {
+          <span class="hl-key">"product_code"</span>:  <span class="hl-str">"100"</span>,   <span class="hl-com">// Mahsulot kodi ✱</span>
+          <span class="hl-key">"on_balance"</span>:    <span class="hl-str">""</span>,      <span class="hl-com">// Balansda ✱</span>
+          <span class="hl-key">"inventory_kind"</span>:<span class="hl-str">"G"</span>,      <span class="hl-com">// P/G/M ✱</span>
+          <span class="hl-key">"quantity"</span>:      <span class="hl-str">"1000"</span>,  <span class="hl-com">// Miqdor ✱</span>
+          <span class="hl-key">"price"</span>:         <span class="hl-str">"3500"</span>,  <span class="hl-com">// Narx ✱</span>
+          <span class="hl-key">"external_id"</span>:   <span class="hl-str">""</span>,
+          <span class="hl-key">"purchase_item_id"</span>: <span class="hl-str">""</span>,
+          <span class="hl-key">"order_item_id"</span>: <span class="hl-str">""</span>,
+          <span class="hl-key">"serial_number"</span>: <span class="hl-str">""</span>,
+          <span class="hl-key">"card_code"</span>:     <span class="hl-str">""</span>,
+          <span class="hl-key">"expiry_date"</span>:   <span class="hl-str">""</span>,
+          <span class="hl-key">"margin_kind"</span>:   <span class="hl-str">""</span>,
+          <span class="hl-key">"margin_value"</span>:  <span class="hl-str">""</span>,
+          <span class="hl-key">"vat_percent"</span>:   <span class="hl-str">""</span>,
+          <span class="hl-key">"vat_amount"</span>:    <span class="hl-str">""</span>
+        }
+      ]
+    }
+  ]
+}</pre>
+
+            <div class="subsection-title">Parametrlar Jadvali — Asosiy</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>purchase</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Xarid ma'lumotlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>purchase_time</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Xarid sanasi (dd.mm.yyyy hh24:mi:ss)</td>
+                  </tr>
+                  <tr>
+                    <td>supplier_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Ta'minotchi kodi</td>
+                  </tr>
+                  <tr>
+                    <td>currency_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Valyuta unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>status_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Status unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>posted</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Yakunlangan: Y — ha, N — yo'q</td>
+                  </tr>
+                  <tr>
+                    <td>purchase_items</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar elementlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>filial_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tashkilot unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>external_id</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tashqi tizim bergan identifikator</td>
+                  </tr>
+                  <tr>
+                    <td>purchase_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Smartup bergan xarid ID si</td>
+                  </tr>
+                  <tr>
+                    <td>purchase_number</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Xarid fakturasi raqami</td>
+                  </tr>
+                  <tr>
+                    <td>input_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovarlar qabul qilingan sana</td>
+                  </tr>
+                  <tr>
+                    <td>order_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Buyurtma ID si</td>
+                  </tr>
+                  <tr>
+                    <td>warehouse_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ombor unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>contract_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Xarid shartnomasi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>invoice_number</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Hisob-faktura raqami</td>
+                  </tr>
+                  <tr>
+                    <td>invoice_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Hisob-faktura sanasi (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>note</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Xarid izohi</td>
+                  </tr>
+                  <tr>
+                    <td>total_margin_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Umumiy chegirma turi</td>
+                  </tr>
+                  <tr>
+                    <td>total_margin_value</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Umumiy chegirma qiymati</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection-title">purchase_items — Tovar Elementlari</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>product_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Mahsulot kodi</td>
+                  </tr>
+                  <tr>
+                    <td>on_balance</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Balansda (Y/N)</td>
+                  </tr>
+                  <tr>
+                    <td>inventory_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">P — mahsulot, G — tovar, M — xom ashyo</td>
+                  </tr>
+                  <tr>
+                    <td>quantity</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Miqdor</td>
+                  </tr>
+                  <tr>
+                    <td>price</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx</td>
+                  </tr>
+                  <tr>
+                    <td>external_id</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tashqi tizim bergan identifikator</td>
+                  </tr>
+                  <tr>
+                    <td>purchase_item_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Smartup bergan element ID</td>
+                  </tr>
+                  <tr>
+                    <td>order_item_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Buyurtma element ID</td>
+                  </tr>
+                  <tr>
+                    <td>serial_number</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Seriya raqami</td>
+                  </tr>
+                  <tr>
+                    <td>card_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovar karta raqami</td>
+                  </tr>
+                  <tr>
+                    <td>expiry_date</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yaroqlilik muddati (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>margin_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Chegirma turi: P — foiz, A — summa</td>
+                  </tr>
+                  <tr>
+                    <td>margin_value</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Chegirma qiymati</td>
+                  </tr>
+                  <tr>
+                    <td>vat_percent</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">QQS (%)</td>
+                  </tr>
+                  <tr>
+                    <td>vat_amount</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">QQS summasi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection-title">Response va cURL</div>
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">✅ Muvaffaqiyatli</div>
+                <pre>{ <span class="hl-key">"successes"</span>: [{ <span class="hl-key">"code"</span>: <span class="hl-str">""</span> }] }</pre>
+              </div>
+              <div>
+                <div class="response-col-title">❌ Xato</div>
+                <pre>{ <span class="hl-key">"errors"</span>: [{ <span class="hl-key">"code"</span>: <span class="hl-str">""</span>, <span class="hl-key">"message"</span>: <span class="hl-str">""</span> }] }</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 
+        ==========================================================================
+        6. REFERENCES (MA'LUMOTNOMALAR) BO'LIMI
+        Ma'lumotnomalar API endpointlarini shu yerda tahrirlang
+        ==========================================================================
+      -->
+      <div class="section">
+        <span class="section-anchor" id="refs"></span>
+        <div class="section-header">
+          <div class="section-icon">📚</div>
+          <div>
+            <div class="section-num">06</div>
+            <div class="section-title">References — Ma'lumotnomalar</div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <div class="alert-icon">ℹ️</div>
+          <div>References bo'limida <strong>100 so'rov/kun</strong> limiti qo'llaniladi. Ma'lumotlar import va eksport
+            qilinishi mumkin.</div>
+        </div>
+
+        <!-- INVENTORY IMPORT -->
+        <span class="section-anchor" id="inventory-import"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Inventory / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mr/inventory$import</div>
+              <div class="endpoint-desc">Uchinchi tomon dasturiy ta'minotidan mahsulot/tovar ma'lumotlarini Smartup
+                tizimiga yuklash imkonini beradi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="subsection-title">Request Body</div>
+            <div class="code-header"><span>JSON — inventory$import (misol)</span><span
+                class="badge badge-post">POST</span></div>
+            <pre>{
+  <span class="hl-key">"inventory"</span>: [
+    {
+      <span class="hl-key">"code"</span>:               <span class="hl-str">"100"</span>,          <span class="hl-com">// Unikal tovar kodi ✱</span>
+      <span class="hl-key">"name"</span>:               <span class="hl-str">"Coca-cola 0.5l"</span>, <span class="hl-com">// To'liq nomi ✱</span>
+      <span class="hl-key">"short_name"</span>:         <span class="hl-str">"Coca-cola 0.5l"</span>,
+      <span class="hl-key">"measure_code"</span>:       <span class="hl-str">"kilogram2"</span>,    <span class="hl-com">// O'lchov birligi kodi ✱</span>
+      <span class="hl-key">"state"</span>:              <span class="hl-str">"A"</span>,            <span class="hl-com">// A-faol, P-nofaol ✱</span>
+      <span class="hl-key">"weight_netto"</span>:       <span class="hl-str">"0.5"</span>,
+      <span class="hl-key">"weight_brutto"</span>:      <span class="hl-str">"0.65"</span>,
+      <span class="hl-key">"litr"</span>:               <span class="hl-str">"0.5"</span>,
+      <span class="hl-key">"box_type_code"</span>:      <span class="hl-str">"block"</span>,
+      <span class="hl-key">"box_quant"</span>:          <span class="hl-str">"12"</span>,
+      <span class="hl-key">"producer_code"</span>:      <span class="hl-str">""</span>,
+      <span class="hl-key">"barcodes"</span>:           <span class="hl-str">""</span>,
+      <span class="hl-key">"order_no"</span>:           <span class="hl-str">""</span>,
+      <span class="hl-key">"article_code"</span>:       <span class="hl-str">"100"</span>,
+      <span class="hl-key">"gtin"</span>:               <span class="hl-str">""</span>,
+      <span class="hl-key">"ikpu"</span>:               <span class="hl-str">""</span>,
+      <span class="hl-key">"tnved"</span>:              <span class="hl-str">""</span>,
+      <span class="hl-key">"marking_group_code"</span>: <span class="hl-str">""</span>,     <span class="hl-com">// tobacco=3, alcohol=11, beer=15, pharm=7, water=13</span>
+      <span class="hl-key">"inventory_id"</span>:       <span class="hl-str">""</span>,
+      <span class="hl-key">"product_id"</span>:         <span class="hl-str">""</span>,
+      <span class="hl-key">"groups"</span>: [{ <span class="hl-key">"group_code"</span>: <span class="hl-str">"Drinks"</span>, <span class="hl-key">"type_code"</span>: <span class="hl-str">"A"</span> }],
+      <span class="hl-key">"inventory_kinds"</span>: [{ <span class="hl-key">"inventory_kind"</span>: <span class="hl-str">"P"</span> }],  <span class="hl-com">// ✱</span>
+      <span class="hl-key">"sector_codes"</span>: [{ <span class="hl-key">"sector_code"</span>: <span class="hl-str">"654321"</span> }]        <span class="hl-com">// ✱</span>
+    }
+  ]
+}</pre>
+
+            <div class="subsection-title">Parametrlar Jadvali</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>inventory</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar/mahsulotlar massivi</td>
+                  </tr>
+                  <tr>
+                    <td>code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Unikal tovar kodi (3-tomon integratsiya uchun)</td>
+                  </tr>
+                  <tr>
+                    <td>name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovarning to'liq nomi</td>
+                  </tr>
+                  <tr>
+                    <td>measure_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">O'lchov birligi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>state</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">A — faol, P — nofaol</td>
+                  </tr>
+                  <tr>
+                    <td>inventory_kinds</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar turlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>inventory_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">P — mahsulot, G — tovar, M — xom ashyo</td>
+                  </tr>
+                  <tr>
+                    <td>sector_codes</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Sektor kodlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>sector_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Sektor unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>short_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Muqobil nomi</td>
+                  </tr>
+                  <tr>
+                    <td>box_type_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qadoq turi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>box_quant</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qadoqdagi tovar miqdori</td>
+                  </tr>
+                  <tr>
+                    <td>weight_brutto</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qadoq bilan og'irligi (kg)</td>
+                  </tr>
+                  <tr>
+                    <td>weight_netto</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Qadoqsiz og'irligi (kg)</td>
+                  </tr>
+                  <tr>
+                    <td>litr</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Hajmi (litr)</td>
+                  </tr>
+                  <tr>
+                    <td>producer_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ishlab chiqaruvchi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>barcodes</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovar shtrix-kodi</td>
+                  </tr>
+                  <tr>
+                    <td>order_no</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ro'yxatdagi tartib raqami</td>
+                  </tr>
+                  <tr>
+                    <td>article_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Artikul kodi</td>
+                  </tr>
+                  <tr>
+                    <td>gtin</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">GTIN kodi</td>
+                  </tr>
+                  <tr>
+                    <td>ikpu</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">IKPU kodi</td>
+                  </tr>
+                  <tr>
+                    <td>tnved</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">TN VED kodi</td>
+                  </tr>
+                  <tr>
+                    <td>marking_group_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">tobacco=3, alcohol=11, beer=15, pharm=7, water=13, appliances=18</td>
+                  </tr>
+                  <tr>
+                    <td>groups</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovar xususiyatlari massivi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection-title">Response</div>
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">✅ 200 OK</div>
+                <pre>{
+  <span class="hl-key">"successes"</span>: [
+    { <span class="hl-key">"code"</span>: <span class="hl-str">"100"</span> }
+  ],
+  <span class="hl-key">"errors"</span>: []
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">❌ Xato</div>
+                <pre>{
+  <span class="hl-key">"errors"</span>: [{
+    <span class="hl-key">"code"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"message"</span>: <span class="hl-str">""</span>
+  }]
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SERVICE EXPORT -->
+        <span class="section-anchor" id="service-export"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Service / Export</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mr/service$export</div>
+              <div class="endpoint-desc">Muayyan davr uchun xizmatlar haqidagi ma'lumotlarni eksport qiladi. Bir
+                so'rovda ommaviy ma'lumotlarni qo'llab-quvvatlaydi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request</div>
+                <pre>{
+  <span class="hl-key">"code"</span>:               <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_created_on"</span>:  <span class="hl-str">""</span>,
+  <span class="hl-key">"end_created_on"</span>:    <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_modified_on"</span>: <span class="hl-str">""</span>,
+  <span class="hl-key">"end_modified_on"</span>:   <span class="hl-str">""</span>
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"service"</span>: [{
+    <span class="hl-key">"service_id"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"code"</span>:       <span class="hl-str">""</span>,
+    <span class="hl-key">"name"</span>:       <span class="hl-str">""</span>,
+    <span class="hl-key">"short_name"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"measure_code"</span>:<span class="hl-str">""</span>,
+    <span class="hl-key">"state"</span>:      <span class="hl-str">""</span>,
+    <span class="hl-key">"groups"</span>: [{
+      <span class="hl-key">"group_code"</span>: <span class="hl-str">""</span>,
+      <span class="hl-key">"type_code"</span>:  <span class="hl-str">""</span>
+    }],
+    <span class="hl-key">"order_no"</span>:   <span class="hl-str">""</span>
+  }]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">Parametrlar</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Xizmat unikal kodi bo'yicha filtrlash</td>
+                  </tr>
+                  <tr>
+                    <td>begin_created_on</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yaratilish sanasi boshidan filtrlash</td>
+                  </tr>
+                  <tr>
+                    <td>end_created_on</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yaratilish sanasi oxirigacha filtrlash</td>
+                  </tr>
+                  <tr>
+                    <td>begin_modified_on</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">O'zgartirilgan sana boshidan filtrlash</td>
+                  </tr>
+                  <tr>
+                    <td>end_modified_on</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">O'zgartirilgan sana oxirigacha filtrlash</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRICE TYPE IMPORT -->
+        <span class="section-anchor" id="price-type-import"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Price Type / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/api/v2/mkr/price_type$import</div>
+              <div class="endpoint-desc">Uchinchi tomon dasturiy ta'minotidan narx turlarini yuklash funksionalligi
+                amalga oshirilgan.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request (misol)</div>
+                <pre>{
+  <span class="hl-key">"price_type"</span>: [{
+    <span class="hl-key">"name"</span>:            <span class="hl-str">"Price for dispatching"</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"code"</span>:            <span class="hl-str">"777"</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"short_name"</span>:      <span class="hl-str">"PfD"</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"price_type_kind"</span>: <span class="hl-str">"S"</span>,   <span class="hl-com">// S-sotuv, P-xarid ✱</span>
+    <span class="hl-key">"currency_code"</span>:   <span class="hl-str">"860"</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"with_card"</span>:       <span class="hl-str">"N"</span>,   <span class="hl-com">// ✱</span>
+    <span class="hl-key">"state"</span>:           <span class="hl-str">"A"</span>    <span class="hl-com">// ✱</span>
+  }]
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"successes"</span>: [
+    { <span class="hl-key">"code"</span>: <span class="hl-str">""</span> }
+  ],
+  <span class="hl-key">"errors"</span>: [
+    {
+      <span class="hl-key">"code"</span>:    <span class="hl-str">""</span>,
+      <span class="hl-key">"message"</span>: <span class="hl-str">""</span>
+    }
+  ]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">Parametrlar</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>price_type</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx turlari massivi</td>
+                  </tr>
+                  <tr>
+                    <td>code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx turi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx turi nomi</td>
+                  </tr>
+                  <tr>
+                    <td>short_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Muqobil nomi</td>
+                  </tr>
+                  <tr>
+                    <td>price_type_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">S — sotuv narxi, P — xarid narxi</td>
+                  </tr>
+                  <tr>
+                    <td>currency_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Valyuta unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>with_card</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Partiyalar bo'yicha hisobot identifikatori</td>
+                  </tr>
+                  <tr>
+                    <td>state</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">A — faol, P — nofaol</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- INVENTORY PRICE IMPORT -->
+        <span class="section-anchor" id="inventory-price"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Inventory Price / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/api/v2/mkf/product_price$import</div>
+              <div class="endpoint-desc">Uchinchi tomon dasturiy ta'minotidan tovarlar narxlarini yuklaydi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request</div>
+                <pre>{
+  <span class="hl-key">"inventory"</span>: [{
+    <span class="hl-key">"inventory_code"</span>: <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"price_type"</span>: [{
+      <span class="hl-key">"price_type_code"</span>: <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+      <span class="hl-key">"card_code"</span>:      <span class="hl-str">""</span>,
+      <span class="hl-key">"price"</span>:          <span class="hl-str">""</span>  <span class="hl-com">// ✱</span>
+    }]
+  }]
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"successes"</span>: [
+    { <span class="hl-key">"code"</span>: <span class="hl-str">""</span> }
+  ],
+  <span class="hl-key">"errors"</span>: [
+    {
+      <span class="hl-key">"code"</span>:    <span class="hl-str">""</span>,
+      <span class="hl-key">"message"</span>: <span class="hl-str">""</span>
+    }
+  ]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">Parametrlar</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>inventory</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar/mahsulotlar massivi</td>
+                  </tr>
+                  <tr>
+                    <td>inventory_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Tovar unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>price_type_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narx turi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>price</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Narq qiymati</td>
+                  </tr>
+                  <tr>
+                    <td>card_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tovar karta raqami</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- NATURAL PERSONS IMPORT -->
+        <span class="section-anchor" id="natural-person"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Natural Persons / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mr/natural_person$import</div>
+              <div class="endpoint-desc">Uchinchi tomon dasturiy ta'minotidan jismoniy shaxslar haqidagi ma'lumotlarni
+                Smartup X ga yuklaydi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="subsection-title">Request Body</div>
+            <div class="code-header"><span>JSON — natural_person$import (misol)</span><span
+                class="badge badge-post">POST</span></div>
+            <pre>{
+  <span class="hl-key">"natural_person"</span>: [{
+    <span class="hl-key">"first_name"</span>:       <span class="hl-str">"Ivan"</span>,           <span class="hl-com">// Ism ✱</span>
+    <span class="hl-key">"last_name"</span>:        <span class="hl-str">"Ivanov"</span>,
+    <span class="hl-key">"middle_name"</span>:      <span class="hl-str">"Ivanovich"</span>,
+    <span class="hl-key">"code"</span>:             <span class="hl-str">"1001"</span>,           <span class="hl-com">// Unikal kod ✱</span>
+    <span class="hl-key">"person_id"</span>:        <span class="hl-str">""</span>,
+    <span class="hl-key">"birthday"</span>:         <span class="hl-str">"12.12.2000"</span>,
+    <span class="hl-key">"gender"</span>:           <span class="hl-str">"M"</span>,              <span class="hl-com">// M-erkak, F-ayol ✱</span>
+    <span class="hl-key">"region_code"</span>:      <span class="hl-str">"Tashkent"</span>,
+    <span class="hl-key">"address"</span>:          <span class="hl-str">"Tashkent city, Chilanzar, 20"</span>,
+    <span class="hl-key">"post_address"</span>:     <span class="hl-str">""</span>,
+    <span class="hl-key">"is_budgetarian"</span>:   <span class="hl-str">"Y"</span>,              <span class="hl-com">// Mas'ul (Y/N) ✱</span>
+    <span class="hl-key">"state"</span>:            <span class="hl-str">"A"</span>,              <span class="hl-com">// A-faol, P-nofaol ✱</span>
+    <span class="hl-key">"legal_person_code"</span>:<span class="hl-str">""</span>,
+    <span class="hl-key">"web"</span>:              <span class="hl-str">""</span>,
+    <span class="hl-key">"telegram"</span>:         <span class="hl-str">""</span>,
+    <span class="hl-key">"is_client"</span>:        <span class="hl-str">""</span>,              <span class="hl-com">// Mijoz sifatida saqlash (Y/N)</span>
+    <span class="hl-key">"is_supplier"</span>:      <span class="hl-str">""</span>,              <span class="hl-com">// Ta'minotchi sifatida saqlash (Y/N)</span>
+    <span class="hl-key">"main_phone"</span>:       <span class="hl-str">""</span>,
+    <span class="hl-key">"email"</span>:            <span class="hl-str">""</span>,
+    <span class="hl-key">"latlng"</span>:           <span class="hl-str">""</span>,              <span class="hl-com">// Kenglik va uzunlik</span>
+    <span class="hl-key">"groups"</span>: [{ <span class="hl-key">"group_code"</span>: <span class="hl-str">""</span>, <span class="hl-key">"type_code"</span>: <span class="hl-str">""</span> }]
+  }]
+}</pre>
+
+            <div class="subsection-title">Parametrlar Jadvali</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>natural_person</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Jismoniy shaxslar massivi</td>
+                  </tr>
+                  <tr>
+                    <td>first_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Ismi</td>
+                  </tr>
+                  <tr>
+                    <td>code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Unikal kod</td>
+                  </tr>
+                  <tr>
+                    <td>gender</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">M — erkak, F — ayol</td>
+                  </tr>
+                  <tr>
+                    <td>is_budgetarian</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Mas'uliyatli (Y/N)</td>
+                  </tr>
+                  <tr>
+                    <td>state</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">A — faol, P — nofaol</td>
+                  </tr>
+                  <tr>
+                    <td>last_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Familiyasi</td>
+                  </tr>
+                  <tr>
+                    <td>middle_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Otasining ismi</td>
+                  </tr>
+                  <tr>
+                    <td>person_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Unikal ID</td>
+                  </tr>
+                  <tr>
+                    <td>birthday</td>
+                    <td style="color:var(--blue)">date</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Tug'ilgan sanasi (dd.mm.yyyy)</td>
+                  </tr>
+                  <tr>
+                    <td>region_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yashash hududi unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>address</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ro'yxatdan o'tish joyi</td>
+                  </tr>
+                  <tr>
+                    <td>post_address</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Haqiqiy yashash joyi</td>
+                  </tr>
+                  <tr>
+                    <td>legal_person_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Yuridik shaxs unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>web</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Veb-sayt</td>
+                  </tr>
+                  <tr>
+                    <td>email</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Elektron pochta</td>
+                  </tr>
+                  <tr>
+                    <td>telegram</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Telegram kontakt</td>
+                  </tr>
+                  <tr>
+                    <td>is_client</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Mijoz sifatida saqlash: Y/N</td>
+                  </tr>
+                  <tr>
+                    <td>is_supplier</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Ta'minotchi sifatida saqlash: Y/N</td>
+                  </tr>
+                  <tr>
+                    <td>main_phone</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Asosiy telefon raqami</td>
+                  </tr>
+                  <tr>
+                    <td>latlng</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Kenglik va uzunlik koordinatalari</td>
+                  </tr>
+                  <tr>
+                    <td>groups</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Shaxs xususiyatlari massivi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PERSON GROUP IMPORT -->
+        <div class="folder-divider">
+          <div class="folder-icon">📂</div>
+          <div>
+            <div class="folder-name">Persons Group</div>
+            <div class="folder-desc">Shaxslar guruhlari bo'limi</div>
+          </div>
+          <div class="folder-line"></div>
+        </div>
+
+        <span class="section-anchor" id="person-group-import"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Persons Group / Import</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mr/person_group$import</div>
+              <div class="endpoint-desc">Tizimda standart guruhlardan tashqari yangi shaxslar guruhlarini yaratadi va
+                import qiladi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request</div>
+                <pre>{
+  <span class="hl-key">"person_group"</span>: [{
+    <span class="hl-key">"code"</span>:        <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"name"</span>:        <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+    <span class="hl-key">"person_kind"</span>: <span class="hl-str">""</span>, <span class="hl-com">// N-jismoniy, L-yuridik ✱</span>
+    <span class="hl-key">"state"</span>:       <span class="hl-str">""</span>, <span class="hl-com">// A-faol, P-nofaol ✱</span>
+    <span class="hl-key">"person_group_id"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"person_group_types"</span>: [{
+      <span class="hl-key">"code"</span>:     <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+      <span class="hl-key">"name"</span>:     <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+      <span class="hl-key">"state"</span>:    <span class="hl-str">""</span>, <span class="hl-com">// ✱</span>
+      <span class="hl-key">"order_no"</span>: <span class="hl-str">""</span>
+    }]
+  }]
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"successes"</span>: [
+    { <span class="hl-key">"code"</span>: <span class="hl-str">""</span> }
+  ],
+  <span class="hl-key">"errors"</span>: [
+    {
+      <span class="hl-key">"code"</span>:    <span class="hl-str">""</span>,
+      <span class="hl-key">"message"</span>: <span class="hl-str">""</span>
+    }
+  ]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">Parametrlar</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Parametr</th>
+                    <th>Tur</th>
+                    <th>Majburiy</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>person_group</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Shaxslar guruhi massivi</td>
+                  </tr>
+                  <tr>
+                    <td>code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Guruh unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">Guruhning to'liq nomi</td>
+                  </tr>
+                  <tr>
+                    <td>person_kind</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">N — jismoniy shaxs, L — yuridik shaxs</td>
+                  </tr>
+                  <tr>
+                    <td>state</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td><span class="badge badge-yes">YES</span></td>
+                    <td style="color:var(--text2)">A — faol, P — nofaol</td>
+                  </tr>
+                  <tr>
+                    <td>person_group_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Unikal ID</td>
+                  </tr>
+                  <tr>
+                    <td>person_group_types</td>
+                    <td style="color:var(--blue)">array</td>
+                    <td><span class="badge badge-no">NO</span></td>
+                    <td style="color:var(--text2)">Guruh xususiyatlari massivi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PERSON GROUP EXPORT -->
+        <span class="section-anchor" id="person-group-export"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Persons Group / Export</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mr/person_group$export</div>
+              <div class="endpoint-desc">Shaxslar guruhlari haqidagi ma'lumotlarni eksport qiladi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request</div>
+                <pre>{
+  <span class="hl-key">"code"</span>:               <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_created_on"</span>:  <span class="hl-str">""</span>,
+  <span class="hl-key">"end_created_on"</span>:    <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_modified_on"</span>: <span class="hl-str">""</span>,
+  <span class="hl-key">"end_modified_on"</span>:   <span class="hl-str">""</span>
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"person_group"</span>: [{
+    <span class="hl-key">"code"</span>:        <span class="hl-str">""</span>,
+    <span class="hl-key">"person_group_id"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"name"</span>:        <span class="hl-str">""</span>,
+    <span class="hl-key">"person_kind"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"state"</span>:       <span class="hl-str">""</span>,
+    <span class="hl-key">"person_group_types"</span>: [{
+      <span class="hl-key">"code"</span>:     <span class="hl-str">""</span>,
+      <span class="hl-key">"name"</span>:     <span class="hl-str">""</span>,
+      <span class="hl-key">"state"</span>:    <span class="hl-str">""</span>,
+      <span class="hl-key">"order_no"</span>: <span class="hl-str">""</span>
+    }]
+  }]
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKSPACES EXPORT -->
+        <div class="folder-divider">
+          <div class="folder-icon">🏢</div>
+          <div>
+            <div class="folder-name">Workspaces</div>
+            <div class="folder-desc">Ish maydonlari bo'limi</div>
+          </div>
+          <div class="folder-line"></div>
+        </div>
+
+        <span class="section-anchor" id="workspace-export"></span>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-method method-post">POST</div>
+            <div class="endpoint-info">
+              <div class="endpoint-name">Workspaces / Export</div>
+              <div class="endpoint-url">https://smartup.online/b/anor/mxsx/mrf/room$export</div>
+              <div class="endpoint-desc">Muayyan davr uchun ish maydonlari haqidagi ma'lumotlarni eksport qiladi.</div>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="response-grid">
+              <div>
+                <div class="response-col-title">📤 Request</div>
+                <pre>{
+  <span class="hl-key">"code"</span>:               <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_created_on"</span>:  <span class="hl-str">""</span>,
+  <span class="hl-key">"end_created_on"</span>:    <span class="hl-str">""</span>,
+  <span class="hl-key">"begin_modified_on"</span>: <span class="hl-str">""</span>,
+  <span class="hl-key">"end_modified_on"</span>:   <span class="hl-str">""</span>
+}</pre>
+              </div>
+              <div>
+                <div class="response-col-title">📥 Response</div>
+                <pre>{
+  <span class="hl-key">"room"</span>: [{
+    <span class="hl-key">"room_code"</span>:      <span class="hl-str">""</span>,
+    <span class="hl-key">"room_id"</span>:        <span class="hl-str">""</span>,
+    <span class="hl-key">"filial_code"</span>:    <span class="hl-str">""</span>,
+    <span class="hl-key">"room_name"</span>:      <span class="hl-str">""</span>,
+    <span class="hl-key">"room_type_code"</span>: <span class="hl-str">""</span>,
+    <span class="hl-key">"state"</span>:          <span class="hl-str">""</span>,
+    <span class="hl-key">"order_no"</span>:       <span class="hl-str">""</span>
+  }]
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection-title">Parametrlar va Response Fields</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Maydon</th>
+                    <th>Tur</th>
+                    <th>Tavsif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>room_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td style="color:var(--text2)">Ish maydoni unikal kodi</td>
+                  </tr>
+                  <tr>
+                    <td>room_id</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td style="color:var(--text2)">Ish maydoni ID si</td>
+                  </tr>
+                  <tr>
+                    <td>filial_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td style="color:var(--text2)">Tashkilot kodi</td>
+                  </tr>
+                  <tr>
+                    <td>room_name</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td style="color:var(--text2)">Ish maydoni nomi</td>
+                  </tr>
+                  <tr>
+                    <td>room_type_code</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td style="color:var(--text2)">Ish maydoni turi</td>
+                  </tr>
+                  <tr>
+                    <td>state</td>
+                    <td style="color:var(--blue)">string</td>
+                    <td style="color:var(--text2)">Holat (A/P)</td>
+                  </tr>
+                  <tr>
+                    <td>order_no</td>
+                    <td style="color:var(--blue)">number</td>
+                    <td style="color:var(--text2)">Ro'yxatdagi tartib raqami</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+  </main>
+
+  <script>
+    // Active nav highlighting on scroll
+    const sections = document.querySelectorAll('.section-anchor');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navItems.forEach(n => n.classList.remove('active'));
+          const id = entry.target.id;
+          const active = document.querySelector(`.nav-item[href="#${id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    sections.forEach(s => { if (s.id) observer.observe(s); });
+  </script>
+</body>
+
+</html>
